@@ -85,7 +85,7 @@ fi
 sudo semanage fcontext -a -t bin_t "$(realpath /usr/local/bin/nginx-create-session-ticket-keys)"
 sudo restorecon "$(realpath /usr/local/bin/nginx-create-session-ticket-keys)"
 sudo chmod u+x "$(realpath /usr/local/bin/nginx-create-session-ticket-keys)"
-echo 'restorecon -Rv /etc/nginx/session-ticket-keys' | sudo tee -a "$(realpath /usr/local/bin/nginx-create-session-ticket-keys)"
+sudo sed -i '$i restorecon -Rv /etc/nginx/session-ticket-keys' "$(realpath /usr/local/bin/nginx-create-session-ticket-keys)"
 
 # Set the appropriate SELinux context for session ticket keys rotation
 unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/nginx-rotate-session-ticket-keys | sudo tee /usr/local/bin/nginx-rotate-session-ticket-keys > /dev/null
