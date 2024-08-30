@@ -89,7 +89,6 @@ sudo sed -i '$i restorecon -Rv /etc/nginx/session-ticket-keys' "$(realpath /usr/
 
 # Set the appropriate SELinux context for session ticket keys rotation
 unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/nginx-rotate-session-ticket-keys | sudo tee /usr/local/bin/nginx-rotate-session-ticket-keys > /dev/null
-## Explicitly using /var/usrlocal/bin here because SELinux does not follow symlinks
 sudo semanage fcontext -a -t bin_t "$(realpath /usr/local/bin/nginx-rotate-session-ticket-keys)"
 sudo restorecon -Rv "$(realpath /usr/local/bin/nginx-rotate-session-ticket-keys)"
 sudo chmod u+x "$(realpath /usr/local/bin/nginx-rotate-session-ticket-keys)"
