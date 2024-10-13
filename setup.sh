@@ -66,12 +66,13 @@ fi
 # Setup webroot for NGINX
 ## Explicitly using /var/srv here because SELinux does not follow symlinks
 sudo semanage fcontext -a -t httpd_sys_content_t "$(realpath /srv/nginx)(/.*)?"
+sudo mkdir -p /srv/nginx/.well-known/acme-challenge
+sudo chmod -R 755 /srv/nginx
 unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/srv/nginx/ads.txt | sudo tee /srv/nginx/ads.txt > /dev/null
 unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/srv/nginx/app-ads.txt | sudo tee /srv/nginx/app-ads.txt > /dev/null
 unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/srv/nginx/robots.txt | sudo tee /srv/nginx/robots.txt > /dev/null
-sudo chmod 644 /srv/nginx/*
-sudo mkdir -p /srv/nginx/.well-known/acme-challenge
-sudo chmod -R 755 /srv/nginx/.well-known/acme-challenge
+sudo chmod 644 /srv/nginx/{ads.txt,app-ads.txt,robots.txt}
+sudo restorecon -Rv "$(realpath /srv/nginx)(/.*)?"
 
 # NGINX hardening
 sudo mkdir -p /etc/systemd/system/nginx.service.d
