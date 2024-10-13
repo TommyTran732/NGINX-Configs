@@ -66,6 +66,7 @@ fi
 # Setup webroot for NGINX
 ## Explicitly using /var/srv here because SELinux does not follow symlinks
 sudo semanage fcontext -a -t httpd_sys_content_t "$(realpath /srv/nginx)(/.*)?"
+unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/srv/nginx/robots.txt | sudo tee /srv/nginx/robots.txt > /dev/null
 sudo mkdir -p /srv/nginx/.well-known/acme-challenge
 sudo chmod -R 755 /srv/nginx/.well-known/acme-challenge
 
@@ -122,6 +123,7 @@ unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main
 unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/quic.conf | sudo tee /etc/nginx/snippets/quic.conf > /dev/null
 unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/security.conf | sudo tee /etc/nginx/snippets/security.conf > /dev/null
 unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/cross-origin-security.conf | sudo tee /etc/nginx/snippets/cross-origin-security.conf > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/robots.conf | sudo tee /etc/nginx/snippets/robots.conf > /dev/null
 unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/universal_paths.conf | sudo tee /etc/nginx/snippets/universal_paths.conf > /dev/null
 
 if [ "${ip_pinning}" = '0' ]; then
