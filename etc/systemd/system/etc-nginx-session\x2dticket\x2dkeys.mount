@@ -7,3 +7,6 @@ Where=/etc/nginx/session-ticket-keys
 Type=tmpfs
 Options=size=1M,noswap,x-systemd.before=nginx-create-session-ticket-keys.service,x-systemd.required-by=nginx-create-session-ticket-keys.service
 DirectoryMode=700
+
+[Install]
+WantedBy=local-fs.target

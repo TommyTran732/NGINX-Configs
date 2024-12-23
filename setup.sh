@@ -102,7 +102,7 @@ sudo chmod u+x "$(realpath /usr/local/bin/nginx-rotate-session-ticket-keys)"
 sudo sed -i '$i restorecon -Rv /etc/nginx/session-ticket-keys' "$(realpath /usr/local/bin/nginx-rotate-session-ticket-keys)"
 
 # Download the units
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/refs/heads/main/etc/systemd/system/nginx-session-ticket-keys.mount | sudo tee /etc/systemd/system/nginx-session-ticket-keys.mount > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/refs/heads/main/etc/systemd/system/etc-nginx-session%5Cx2dticket%5Cx2dkeys.mount | sudo tee /etc/systemd/system/etc-nginx-session\\x2dticket\\x2dkeys.mount > /dev/null
 unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/systemd/system/nginx-create-session-ticket-keys.service | sudo tee /etc/systemd/system/nginx-create-session-ticket-keys.service > /dev/null
 unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/systemd/system/nginx-rotate-session-ticket-keys.service | sudo tee /etc/systemd/system/nginx-rotate-session-ticket-keys.service > /dev/null
 unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/systemd/system/nginx-rotate-session-ticket-keys.timer | sudo tee /etc/systemd/system/nginx-rotate-session-ticket-keys.timer > /dev/null
@@ -114,7 +114,7 @@ unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main
 sudo systemctl daemon-reload
 
 # Enable the units
-sudo systemctl enable --now nginx-session-ticket-keys.mount
+sudo systemctl enable --now etc-nginx-session\\x2dticket\\x2dkeys.mount
 sudo systemctl enable --now nginx-create-session-ticket-keys.service
 sudo systemctl enable --now nginx-rotate-session-ticket-keys.timer
 
