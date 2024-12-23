@@ -82,7 +82,7 @@ sudo systemctl daemon-reload
 
 # Setup nginx-create-session-ticket-keys
 
-mkdir -p /etc/nginx/session-ticket-keys
+sudo mkdir -p /etc/nginx/session-ticket-keys
 
 if grep -q rhel /etc/os-release; then
     unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/scripts/nginx-create-session-ticket-keys-ramfs | sudo tee /usr/local/bin/nginx-create-session-ticket-keys > /dev/null
