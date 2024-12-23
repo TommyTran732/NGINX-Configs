@@ -2,7 +2,7 @@
 Description=NGINX session ticket keys /etc/nginx/session-ticket-keys
 
 [Mount]
-What=tmps
+What=tmpfs
 Where=/etc/nginx/session-ticket-keys
 Type=tmpfs
 Options=size=1M,noswap,x-systemd.before=nginx-create-session-ticket-keys.service,x-systemd.required-by=nginx-create-session-ticket-keys.service
