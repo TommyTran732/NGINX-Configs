@@ -72,7 +72,7 @@ unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/
 unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/srv/nginx/app-ads.txt | sudo tee /srv/nginx/app-ads.txt > /dev/null
 unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/srv/nginx/robots.txt | sudo tee /srv/nginx/robots.txt > /dev/null
 sudo chmod 644 /srv/nginx/ads.txt /srv/nginx/app-ads.txt /srv/nginx/robots.txt
-sudo restorecon -Rv "$(realpath /srv/nginx)(/.*)?"
+sudo restorecon -Rv "$(realpath /srv/nginx)"
 
 # NGINX hardening
 sudo mkdir -p /etc/systemd/system/nginx.service.d
