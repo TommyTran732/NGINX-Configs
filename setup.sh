@@ -81,11 +81,15 @@ sudo chmod 644 /etc/systemd/system/nginx.service.d/override.conf
 sudo systemctl daemon-reload
 
 # Setup nginx-create-session-ticket-keys
+
+mkdir -p /etc/nginx/session-ticket-keys
+
 if grep -q rhel /etc/os-release; then
     unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/scripts/nginx-create-session-ticket-keys-ramfs | sudo tee /usr/local/bin/nginx-create-session-ticket-keys > /dev/null
 else
     unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/nginx-create-session-ticket-keys | sudo tee /usr/local/bin/nginx-create-session-ticket-keys > /dev/null
 fi
+
 ## Set the appropriate SELinux context for session ticket keys creation
 sudo semanage fcontext -a -t bin_t "$(realpath /usr/local/bin/nginx-create-session-ticket-keys)"
 sudo restorecon "$(realpath /usr/local/bin/nginx-create-session-ticket-keys)"
