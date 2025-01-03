@@ -122,10 +122,7 @@ sudo systemctl enable --now nginx-rotate-session-ticket-keys.timer
 
 # Download NGINX configs
 
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/conf.d/http2.conf | sudo tee /etc/nginx/conf.d/http2.conf > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/conf.d/server_tokens.conf | sudo tee /etc/nginx/conf.d/server_tokens.conf > /dev/null
 unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/conf.d/default.conf | sudo tee /etc/nginx/conf.d/default.conf > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/conf.d/tls.conf | sudo tee /etc/nginx/conf.d/tls.conf > /dev/null
 
 sudo mkdir -p /etc/nginx/snippets
 unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/proxy.conf | sudo tee /etc/nginx/snippets/proxy.conf > /dev/null
