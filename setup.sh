@@ -125,7 +125,6 @@ sudo systemctl enable --now nginx-rotate-session-ticket-keys.timer
 unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/conf.d/default.conf | sudo tee /etc/nginx/conf.d/default.conf > /dev/null
 
 sudo mkdir -p /etc/nginx/snippets
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/hsts.conf | sudo tee /etc/nginx/snippets/hsts.conf > /dev/null
 unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/proxy.conf | sudo tee /etc/nginx/snippets/proxy.conf > /dev/null
 unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/quic.conf | sudo tee /etc/nginx/snippets/quic.conf > /dev/null
 unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/security.conf | sudo tee /etc/nginx/snippets/security.conf > /dev/null
