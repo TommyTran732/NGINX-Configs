@@ -64,7 +64,6 @@ if [ "${ip_pinning}" = '1' ]; then
 fi
 
 # Setup webroot for NGINX
-## Explicitly using /var/srv here because SELinux does not follow symlinks
 sudo semanage fcontext -a -t httpd_sys_content_t "$(realpath /srv/nginx)(/.*)?"
 sudo mkdir -p /srv/nginx/.well-known/acme-challenge
 sudo chmod -R 755 /srv/nginx
