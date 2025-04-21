@@ -74,12 +74,6 @@ unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main
 sudo chmod 644 /srv/nginx/ads.txt /srv/nginx/app-ads.txt /srv/nginx/robots.txt
 sudo restorecon -Rv "$(realpath /srv/nginx)"
 
-# NGINX hardening
-sudo mkdir -p /etc/systemd/system/nginx.service.d
-unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/systemd/system/nginx.service.d/local.conf | sudo tee /etc/systemd/system/nginx.service.d/override.conf > /dev/null
-sudo chmod 644 /etc/systemd/system/nginx.service.d/override.conf
-sudo systemctl daemon-reload
-
 # Setup nginx-create-session-ticket-keys
 
 sudo mkdir -p /etc/nginx/session-ticket-keys
