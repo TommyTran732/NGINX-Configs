@@ -1,6 +1,3 @@
-User-agent: *
-Disallow: /
-
 # Based on https://seirdy.one/robots.txt
 
 User-agent: Adsbot
