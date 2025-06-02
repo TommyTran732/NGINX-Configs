@@ -50,10 +50,12 @@ sudo setsebool -P httpd_can_network_connect 1
 sudo semanage port -a -t http_port_t -p udp 443
 
 # Open ports for NGINX
-sudo firewall-cmd --permanent --add-service=http
-sudo firewall-cmd --permanent --add-service=https
-sudo firewall-cmd --permanent --add-port=443/udp
-sudo firewall-cmd --reload
+if [ -f '/usr/bin/firewalld-cmd' ]; then
+    sudo firewall-cmd --permanent --add-service=http
+    sudo firewall-cmd --permanent --add-service=https
+    sudo firewall-cmd --permanent --add-port=443/udp
+    sudo firewall-cmd --reload
+fi
 
 if [ "${ip_pinning}" = '1' ]; then
     # Add 99-nonlocal-bind.conf
