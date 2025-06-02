@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2024 Thien Tran
+# Copyright (C) 2024-2025 Thien Tran, GrapheneOS
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -47,7 +47,9 @@ ip_pinning_prompt
 sudo setsebool -P httpd_can_network_connect 1
 
 # Allow QUIC
-sudo semanage port -a -t http_port_t -p udp 443
+if grep -q rhel /etc/os-release; then
+    sudo semanage port -a -t http_port_t -p udp 443
+fi
 
 # Open ports for NGINX
 if [ -f '/usr/bin/firewalld-cmd' ]; then
@@ -75,34 +77,25 @@ unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main
 sudo chmod 644 /srv/nginx/ads.txt /srv/nginx/app-ads.txt /srv/nginx/robots.txt
 sudo restorecon -Rv "$(realpath /srv/nginx)"
 
-# Setup nginx-create-session-ticket-keys
+# Setup create-session-ticket-keys
 
 sudo mkdir -p /etc/nginx/session-ticket-keys
+unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/refs/heads/main/usr/local/bin/create-session-ticket-keys | sudo tee /usr/local/bin/create-session-ticket-keys > /dev/null
+sudo semanage fcontext -a -t bin_t /usr/local/bin/create-session-ticket-keys
+sudo restorecon /usr/local/bin/create-session-ticket-keys
+sudo chmod u+x /usr/local/bin/create-session-ticket-keys
 
-if grep -q rhel /etc/os-release; then
-    unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/scripts/nginx-create-session-ticket-keys-ramfs | sudo tee /usr/local/bin/nginx-create-session-ticket-keys > /dev/null
-else
-    unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/nginx-create-session-ticket-keys | sudo tee /usr/local/bin/nginx-create-session-ticket-keys > /dev/null
-fi
-
-## Set the appropriate SELinux context for session ticket keys creation
-sudo semanage fcontext -a -t bin_t "$(realpath /usr/local/bin/nginx-create-session-ticket-keys)"
-sudo restorecon "$(realpath /usr/local/bin/nginx-create-session-ticket-keys)"
-sudo chmod u+x "$(realpath /usr/local/bin/nginx-create-session-ticket-keys)"
-sudo sed -i '$i restorecon -Rv /etc/nginx/session-ticket-keys' "$(realpath /usr/local/bin/nginx-create-session-ticket-keys)"
-
-# Set the appropriate SELinux context for session ticket keys rotation
-unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/nginx-rotate-session-ticket-keys | sudo tee /usr/local/bin/nginx-rotate-session-ticket-keys > /dev/null
-sudo semanage fcontext -a -t bin_t "$(realpath /usr/local/bin/nginx-rotate-session-ticket-keys)"
-sudo restorecon -Rv "$(realpath /usr/local/bin/nginx-rotate-session-ticket-keys)"
-sudo chmod u+x "$(realpath /usr/local/bin/nginx-rotate-session-ticket-keys)"
-sudo sed -i '$i restorecon -Rv /etc/nginx/session-ticket-keys' "$(realpath /usr/local/bin/nginx-rotate-session-ticket-keys)"
+# Setup rotate-session-ticket-keys
+unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/refs/heads/main/usr/local/bin/rotate-session-ticket-keys | sudo tee /usr/local/bin/rotate-session-ticket-keys > /dev/null
+sudo semanage fcontext -a -t bin_t /usr/local/bin/rotate-session-ticket-keys
+sudo restorecon -Rv /usr/local/bin/rotate-session-ticket-keys
+sudo chmod u+x /usr/local/bin/rotate-session-ticket-keys
 
 # Download the units
 unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/refs/heads/main/etc/systemd/system/etc-nginx-session%5Cx2dticket%5Cx2dkeys.mount | sudo tee /etc/systemd/system/etc-nginx-session\\x2dticket\\x2dkeys.mount > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/systemd/system/nginx-create-session-ticket-keys.service | sudo tee /etc/systemd/system/nginx-create-session-ticket-keys.service > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/systemd/system/nginx-rotate-session-ticket-keys.service | sudo tee /etc/systemd/system/nginx-rotate-session-ticket-keys.service > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/systemd/system/nginx-rotate-session-ticket-keys.timer | sudo tee /etc/systemd/system/nginx-rotate-session-ticket-keys.timer > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/refs/heads/main/etc/systemd/system/create-session-ticket-keys.service | sudo tee /etc/systemd/system/create-session-ticket-keys.service > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/refs/heads/main/etc/systemd/system/rotate-session-ticket-keys.service | sudo tee /etc/systemd/system/rotate-session-ticket-keys.service > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/refs/heads/main/etc/systemd/system/rotate-session-ticket-keys.timer | sudo tee /etc/systemd/system/rotate-session-ticket-keys.timer > /dev/null
 
 # Systemd Hardening
 sudo mkdir -p /etc/systemd/system/nginx.service.d /etc/systemd/system/certbot-renew.service.d
@@ -112,8 +105,8 @@ sudo systemctl daemon-reload
 
 # Enable the units
 sudo systemctl enable --now etc-nginx-session\\x2dticket\\x2dkeys.mount
-sudo systemctl enable --now nginx-create-session-ticket-keys.service
-sudo systemctl enable --now nginx-rotate-session-ticket-keys.timer
+sudo systemctl enable --now create-session-ticket-keys.service
+sudo systemctl enable --now rotate-session-ticket-keys.timer
 
 # Download NGINX configs
 
