@@ -1,4 +1,0 @@
-certbot certonly --webroot --webroot-path /srv/nginx --no-eff-email \
-    --key-type ecdsa \
-    --cert-name miniflux.yourdomain.tld \
-    -d miniflux.yourdomain.tld
