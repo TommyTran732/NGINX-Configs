@@ -1,0 +1,9 @@
+#!/bin/sh
+
+certbot certonly \
+    --webroot --webroot-path /srv/nginx \
+    --no-eff-email \
+    --key-type ecdsa \
+    --reuse-key \
+    --deploy-hook "nginx -s reload" \
+    -d hostname.of.your.server
