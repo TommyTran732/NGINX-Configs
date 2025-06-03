@@ -121,6 +121,6 @@ unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main
 unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/universal_paths.conf | sudo tee /etc/nginx/snippets/universal_paths.conf > /dev/null
 
 if [ "${ip_pinning}" = '0' ]; then
-    sudo sed -i 's/ipv4_1://g' /etc/nginx/conf.d/sites_default.conf
-    sudo sed -i 's/ipv6_1/::/g' /etc/nginx/conf.d/sites_default.conf
+    sudo sed -i 's/ipv4_1://g' /etc/nginx/conf.d/default.conf
+    sudo sed -i 's/ipv6_1/::/g' /etc/nginx/conf.d/default.conf
 fi
