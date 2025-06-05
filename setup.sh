@@ -24,25 +24,6 @@ unpriv(){
     sudo -u nobody "$@"
 }
 
-ip_pinning_prompt(){
-    output 'Do you intend to pin IP addresses in your NGINX config?'
-    output 
-    output '1) No'
-    output '2) Yes'
-    output 'Insert the number of your selection:'
-    read -r choice
-    case $choice in
-        1 ) ip_pinning=0
-            ;;
-        2 ) ip_pinning=1
-            ;;
-        * ) output 'You did not enter a valid selection.'
-            ip_pinning_prompt
-    esac
-}
-
-ip_pinning_prompt
-
 # Allow reverse proxy
 sudo setsebool -P httpd_can_network_connect 1
 
@@ -57,14 +38,6 @@ if [ -f '/usr/bin/firewalld-cmd' ]; then
     sudo firewall-cmd --permanent --add-service=https
     sudo firewall-cmd --permanent --add-port=443/udp
     sudo firewall-cmd --reload
-fi
-
-if [ "${ip_pinning}" = '1' ]; then
-    # Add 99-nonlocal-bind.conf
-    # This fixes a long standing bug where network-online.target is reached before IPv6 is obtained, which breaks IPv6 pinning.
-    # Also, if you are using floating IPs for NGINX stream like I do, you need it anyways
-    unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/sysctl.d/99-nonlocal-bind.conf | sudo tee /etc/sysctl.d/99-nonlocal-bind.conf > /dev/null
-    sudo chmod 644 /etc/sysctl.d/99-nonlocal-bind.conf
 fi
 
 # Setup webroot for NGINX
@@ -119,8 +92,3 @@ unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main
 unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/cross-origin-security.conf | sudo tee /etc/nginx/snippets/cross-origin-security.conf > /dev/null
 unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/robots.conf | sudo tee /etc/nginx/snippets/robots.conf > /dev/null
 unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/universal_paths.conf | sudo tee /etc/nginx/snippets/universal_paths.conf > /dev/null
-
-if [ "${ip_pinning}" = '0' ]; then
-    sudo sed -i 's/ipv4_1://g' /etc/nginx/conf.d/default.conf
-    sudo sed -i 's/ipv6_1/::/g' /etc/nginx/conf.d/default.conf
-fi
