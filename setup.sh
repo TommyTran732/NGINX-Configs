@@ -48,22 +48,22 @@ sudo restorecon -Rv "$(realpath /srv/nginx)"
 # Setup create-session-ticket-keys
 
 sudo mkdir -p /etc/nginx/session-ticket-keys
-unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/refs/heads/main/usr/local/bin/create-session-ticket-keys | sudo tee /usr/local/bin/create-session-ticket-keys > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/usr/local/bin/create-session-ticket-keys | sudo tee /usr/local/bin/create-session-ticket-keys > /dev/null
 sudo semanage fcontext -a -t bin_t /usr/local/bin/create-session-ticket-keys
 sudo restorecon /usr/local/bin/create-session-ticket-keys
 sudo chmod u+x /usr/local/bin/create-session-ticket-keys
 
 # Setup rotate-session-ticket-keys
-unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/refs/heads/main/usr/local/bin/rotate-session-ticket-keys | sudo tee /usr/local/bin/rotate-session-ticket-keys > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/usr/local/bin/rotate-session-ticket-keys | sudo tee /usr/local/bin/rotate-session-ticket-keys > /dev/null
 sudo semanage fcontext -a -t bin_t /usr/local/bin/rotate-session-ticket-keys
 sudo restorecon -Rv /usr/local/bin/rotate-session-ticket-keys
 sudo chmod u+x /usr/local/bin/rotate-session-ticket-keys
 
 # Download the units
-unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/refs/heads/main/etc/systemd/system/etc-nginx-session%5Cx2dticket%5Cx2dkeys.mount | sudo tee /etc/systemd/system/etc-nginx-session\\x2dticket\\x2dkeys.mount > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/refs/heads/main/etc/systemd/system/create-session-ticket-keys.service | sudo tee /etc/systemd/system/create-session-ticket-keys.service > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/refs/heads/main/etc/systemd/system/rotate-session-ticket-keys.service | sudo tee /etc/systemd/system/rotate-session-ticket-keys.service > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/refs/heads/main/etc/systemd/system/rotate-session-ticket-keys.timer | sudo tee /etc/systemd/system/rotate-session-ticket-keys.timer > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/systemd/system/etc-nginx-session%5Cx2dticket%5Cx2dkeys.mount | sudo tee /etc/systemd/system/etc-nginx-session\\x2dticket\\x2dkeys.mount > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/systemd/system/create-session-ticket-keys.service | sudo tee /etc/systemd/system/create-session-ticket-keys.service > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/systemd/system/rotate-session-ticket-keys.service | sudo tee /etc/systemd/system/rotate-session-ticket-keys.service > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/systemd/system/rotate-session-ticket-keys.timer | sudo tee /etc/systemd/system/rotate-session-ticket-keys.timer > /dev/null
 
 # Systemd Hardening
 sudo mkdir -p /etc/systemd/system/nginx.service.d /etc/systemd/system/certbot-renew.service.d
