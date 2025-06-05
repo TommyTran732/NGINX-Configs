@@ -2,11 +2,11 @@
 
 [![ShellCheck](https://github.com/TommyTran732/NGINX-Configs/actions/workflows/shellcheck.yml/badge.svg)](https://github.com/TommyTran732/NGINX-Configs/actions/workflows/shellcheck.yml)
 
-These are my NGINX configurations. They are written for `nginx-core` with `nginx-mod-stream` on Fedora and mainline NGINX on RHEL.
+These are my NGINX configurations. They are written for `nginx-core` on Fedora and mainline NGINX on RHEL.
 
 ## Getting Started
 
-1. On Fedora, install `nginx-core`, `nginx-mod-stream`, `certbot` and `policycoreutils-python-utils`. On RHEL, install `nginx` from the mainline repository, `certbot`, and `python3-certbot-nginx`. Makesure `rsync` is available on the OS.
+1. On Fedora, install `nginx-core`, `certbot` and `policycoreutils-python-utils`. On RHEL, install `nginx` from the mainline repository, `certbot`, and `python3-certbot-nginx`. Makesure `rsync` is available on the OS.
 2. On Fedora, comment out the default server block in `/etc/nginx/nginx.conf`. On RHEL, move `/etc/nginx/conf.d/default.conf` to `/etc/nginx/conf.d/default.conf.bk`
 3. Run `setup.sh`
 4. Generate a certificate with your hostname with the `certbot-command` example. Copy `etc/nginx/conf.d/default-quic.conf` to the corresponding directory on your server and edit it approprieately.
