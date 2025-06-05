@@ -27,11 +27,6 @@ unpriv(){
 # Allow reverse proxy
 sudo setsebool -P httpd_can_network_connect 1
 
-# Allow QUIC
-if grep -q rhel /etc/os-release; then
-    sudo semanage port -a -t http_port_t -p udp 443
-fi
-
 # Open ports for NGINX
 if [ -f '/usr/bin/firewalld-cmd' ]; then
     sudo firewall-cmd --permanent --add-service=http
@@ -44,36 +39,36 @@ fi
 sudo semanage fcontext -a -t httpd_sys_content_t "$(realpath /srv/nginx)(/.*)?"
 sudo mkdir -p /srv/nginx/.well-known/acme-challenge
 sudo chmod -R 755 /srv/nginx
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/srv/nginx/ads.txt | sudo tee /srv/nginx/ads.txt > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/srv/nginx/app-ads.txt | sudo tee /srv/nginx/app-ads.txt > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/srv/nginx/robots.txt | sudo tee /srv/nginx/robots.txt > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/srv/nginx/ads.txt | sudo tee /srv/nginx/ads.txt > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/srv/nginx/app-ads.txt | sudo tee /srv/nginx/app-ads.txt > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/srv/nginx/robots.txt | sudo tee /srv/nginx/robots.txt > /dev/null
 sudo chmod 644 /srv/nginx/ads.txt /srv/nginx/app-ads.txt /srv/nginx/robots.txt
 sudo restorecon -Rv "$(realpath /srv/nginx)"
 
 # Setup create-session-ticket-keys
 
 sudo mkdir -p /etc/nginx/session-ticket-keys
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/refs/heads/main/usr/local/bin/create-session-ticket-keys | sudo tee /usr/local/bin/create-session-ticket-keys > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/refs/heads/main/usr/local/bin/create-session-ticket-keys | sudo tee /usr/local/bin/create-session-ticket-keys > /dev/null
 sudo semanage fcontext -a -t bin_t /usr/local/bin/create-session-ticket-keys
 sudo restorecon /usr/local/bin/create-session-ticket-keys
 sudo chmod u+x /usr/local/bin/create-session-ticket-keys
 
 # Setup rotate-session-ticket-keys
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/refs/heads/main/usr/local/bin/rotate-session-ticket-keys | sudo tee /usr/local/bin/rotate-session-ticket-keys > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/refs/heads/main/usr/local/bin/rotate-session-ticket-keys | sudo tee /usr/local/bin/rotate-session-ticket-keys > /dev/null
 sudo semanage fcontext -a -t bin_t /usr/local/bin/rotate-session-ticket-keys
 sudo restorecon -Rv /usr/local/bin/rotate-session-ticket-keys
 sudo chmod u+x /usr/local/bin/rotate-session-ticket-keys
 
 # Download the units
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/refs/heads/main/etc/systemd/system/etc-nginx-session%5Cx2dticket%5Cx2dkeys.mount | sudo tee /etc/systemd/system/etc-nginx-session\\x2dticket\\x2dkeys.mount > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/refs/heads/main/etc/systemd/system/create-session-ticket-keys.service | sudo tee /etc/systemd/system/create-session-ticket-keys.service > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/refs/heads/main/etc/systemd/system/rotate-session-ticket-keys.service | sudo tee /etc/systemd/system/rotate-session-ticket-keys.service > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/refs/heads/main/etc/systemd/system/rotate-session-ticket-keys.timer | sudo tee /etc/systemd/system/rotate-session-ticket-keys.timer > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/refs/heads/main/etc/systemd/system/etc-nginx-session%5Cx2dticket%5Cx2dkeys.mount | sudo tee /etc/systemd/system/etc-nginx-session\\x2dticket\\x2dkeys.mount > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/refs/heads/main/etc/systemd/system/create-session-ticket-keys.service | sudo tee /etc/systemd/system/create-session-ticket-keys.service > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/refs/heads/main/etc/systemd/system/rotate-session-ticket-keys.service | sudo tee /etc/systemd/system/rotate-session-ticket-keys.service > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/refs/heads/main/etc/systemd/system/rotate-session-ticket-keys.timer | sudo tee /etc/systemd/system/rotate-session-ticket-keys.timer > /dev/null
 
 # Systemd Hardening
 sudo mkdir -p /etc/systemd/system/nginx.service.d /etc/systemd/system/certbot-renew.service.d
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/systemd/system/nginx.service.d/override.conf | sudo tee /etc/systemd/system/nginx.service.d/override.conf > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/systemd/system/certbot-renew.service.d/override.conf | sudo tee /etc/systemd/system/certbot-renew.service.d/override.conf > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/systemd/system/nginx.service.d/override.conf | sudo tee /etc/systemd/system/nginx.service.d/override.conf > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/systemd/system/certbot-renew.service.d/override.conf | sudo tee /etc/systemd/system/certbot-renew.service.d/override.conf > /dev/null
 sudo systemctl daemon-reload
 
 # Enable the units
@@ -83,12 +78,12 @@ sudo systemctl enable --now rotate-session-ticket-keys.timer
 
 # Download NGINX configs
 
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/conf.d/default.conf | sudo tee /etc/nginx/conf.d/default.conf > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/conf.d/default.conf | sudo tee /etc/nginx/conf.d/default.conf > /dev/null
 
 sudo mkdir -p /etc/nginx/snippets
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/proxy.conf | sudo tee /etc/nginx/snippets/proxy.conf > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/quic.conf | sudo tee /etc/nginx/snippets/quic.conf > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/security.conf | sudo tee /etc/nginx/snippets/security.conf > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/cross-origin-security.conf | sudo tee /etc/nginx/snippets/cross-origin-security.conf > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/robots.conf | sudo tee /etc/nginx/snippets/robots.conf > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/TommyTran732/NGINX-Configs/main/etc/nginx/snippets/universal_paths.conf | sudo tee /etc/nginx/snippets/universal_paths.conf > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/proxy.conf | sudo tee /etc/nginx/snippets/proxy.conf > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/quic.conf | sudo tee /etc/nginx/snippets/quic.conf > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/security.conf | sudo tee /etc/nginx/snippets/security.conf > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/cross-origin-security.conf | sudo tee /etc/nginx/snippets/cross-origin-security.conf > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/robots.conf | sudo tee /etc/nginx/snippets/robots.conf > /dev/null
+unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/universal_paths.conf | sudo tee /etc/nginx/snippets/universal_paths.conf > /dev/null
