@@ -24,6 +24,25 @@ unpriv(){
     sudo -u nobody "$@"
 }
 
+deployment_mode_prompt(){
+    output 'Regular deployment or Stream deployment?'
+    output 
+    output '1) Regular'
+    output '2) Stream'
+    output 'Insert the number of your selection:'
+    read -r choice
+    case $choice in
+        1 ) deployment_mode=1
+            ;;
+        2 ) deployment_mode=2
+            ;;
+        * ) output 'You did not enter a valid selection.'
+            ip_pinning_prompt
+    esac
+}
+
+deployment_mode_prompt
+
 # Allow reverse proxy
 sudo setsebool -P httpd_can_network_connect 1
 
@@ -39,10 +58,12 @@ fi
 sudo semanage fcontext -a -t httpd_sys_content_t "$(realpath /srv/nginx)(/.*)?"
 sudo mkdir -p /srv/nginx/.well-known/acme-challenge
 sudo chmod -R 755 /srv/nginx
-unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/srv/nginx/ads.txt | sudo tee /srv/nginx/ads.txt > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/srv/nginx/app-ads.txt | sudo tee /srv/nginx/app-ads.txt > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/srv/nginx/robots.txt | sudo tee /srv/nginx/robots.txt > /dev/null
-sudo chmod 644 /srv/nginx/ads.txt /srv/nginx/app-ads.txt /srv/nginx/robots.txt
+if [ "${deployment_mode}" = 1 ]; then
+    unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/srv/nginx/ads.txt | sudo tee /srv/nginx/ads.txt > /dev/null
+    unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/srv/nginx/app-ads.txt | sudo tee /srv/nginx/app-ads.txt > /dev/null
+    unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/srv/nginx/robots.txt | sudo tee /srv/nginx/robots.txt > /dev/null
+    sudo chmod 644 /srv/nginx/ads.txt /srv/nginx/app-ads.txt /srv/nginx/robots.txt
+fi
 sudo restorecon -Rv "$(realpath /srv/nginx)"
 
 # Setup create-session-ticket-keys
@@ -77,13 +98,22 @@ sudo systemctl enable --now create-session-ticket-keys.service
 sudo systemctl enable --now rotate-session-ticket-keys.timer
 
 # Download NGINX configs
+if [ "${deployment_mode}" = 1 ]; then
+    unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/nginx.conf | sudo tee /etc/nginx/nginx.conf > /dev/null
+    unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/conf.d/default.conf | sudo tee /etc/nginx/conf.d/default.conf > /dev/null
+else
+    unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/nginx-stream.conf | sudo tee /etc/nginx/nginx.conf > /dev/null
+fi
 
-unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/conf.d/default.conf | sudo tee /etc/nginx/conf.d/default.conf > /dev/null
-
-sudo mkdir -p /etc/nginx/snippets
-unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/proxy.conf | sudo tee /etc/nginx/snippets/proxy.conf > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/quic.conf | sudo tee /etc/nginx/snippets/quic.conf > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/security.conf | sudo tee /etc/nginx/snippets/security.conf > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/cross-origin-security.conf | sudo tee /etc/nginx/snippets/cross-origin-security.conf > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/robots.conf | sudo tee /etc/nginx/snippets/robots.conf > /dev/null
-unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/universal_paths.conf | sudo tee /etc/nginx/snippets/universal_paths.conf > /dev/null
+if [ "${deployment_mode}" = 1 ]; then
+    sudo mkdir -p /etc/nginx/snippets
+    unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/proxy.conf | sudo tee /etc/nginx/snippets/proxy.conf > /dev/null
+    unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/quic.conf | sudo tee /etc/nginx/snippets/quic.conf > /dev/null
+    unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/security.conf | sudo tee /etc/nginx/snippets/security.conf > /dev/null
+    unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/cross-origin-security.conf | sudo tee /etc/nginx/snippets/cross-origin-security.conf > /dev/null
+    unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/robots.conf | sudo tee /etc/nginx/snippets/robots.conf > /dev/null
+    unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/snippets/universal_paths.conf | sudo tee /etc/nginx/snippets/universal_paths.conf > /dev/null
+else
+    sudo mkdir -p /etc/nginx/stream.d
+    unpriv curl -s https://raw.githubusercontent.com/Metropolis-Nexus/NGINX-Setup/main/etc/nginx/stream.d/upstreams.conf | sudo tee /etc/nginx/stream.d/upstreams.conf > /dev/null
+fi
