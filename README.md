@@ -9,7 +9,7 @@ NGINX configurations meant for deployment on Fedora CoreOS.
 - Install required dependencies: 
 
 ```bash
-rpm-ostree install certbot nginx-core nginx-mod-stream policycoreutils-python-utils
+sudo rpm-ostree install certbot nginx-core nginx-mod-stream policycoreutils-python-utils
 ```
 
 - Comment out the default server block in `/etc/nginx/nginx.conf`
